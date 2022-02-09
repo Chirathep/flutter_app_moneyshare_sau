@@ -9,6 +9,64 @@ class MoneyshareUI extends StatefulWidget {
 }
 
 class _MoneyshareUIState extends State<MoneyshareUI> {
+  bool? check_tip = false;
+
+  //สร้างออปเจ็กต์เพื่อจะนำไปใช้ควบคุม TextField ในหน้าจอที่สร้างไว้
+  TextEditingController? money_ctrl = TextEditingController();
+  TextEditingController? person_ctrl = TextEditingController();
+  TextEditingController? tip_ctrl = TextEditingController();
+
+  //เมธอด -> โค้ดแสดง Dialog เตือน โดยจะรับข้อความมาแสดงที่ Dialog
+
+  showWarningDialog(context, msg) {
+    //เรียกใช้งานฟังก์ชัน showDialog
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Container(
+            color: Colors.deepPurple,
+            padding: EdgeInsets.only(
+              top: 10.0,
+              bottom: 10.0,
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'คำเตือน',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          content: Text(
+            msg,
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'ตกลง',
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.deepPurple,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +100,7 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                   top: 30,
                 ),
                 child: TextField(
+                  controller: money_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'ป้อนจำนวนเงินบาท (บาท)',
@@ -72,6 +131,7 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                   top: 20,
                 ),
                 child: TextField(
+                  controller: person_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'ป้อนจำนวนคน (คน)',
@@ -102,13 +162,22 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Checkbox(
-                    onChanged: (checked) {},
-                    value: false,
+                    onChanged: (checked) {
+                      setState(() {
+                        check_tip = checked;
+                      });
+                    },
+                    value: check_tip,
+                    activeColor: Colors.purple[300],
+                    side: BorderSide(
+                      color: Colors.purple,
+                    ),
                   ),
                   Text(
-                    ' ทิปให้พนักงานเสริฟ',
+                    'ทิปให้พนักงานเสริฟ',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
+                      color: Colors.grey,
                     ),
                   ),
                 ],
@@ -120,6 +189,7 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                   top: 5,
                 ),
                 child: TextField(
+                  controller: tip_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'ป้อนจำนวนทิป (บาท)',
@@ -147,7 +217,21 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                 height: 50,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (money_ctrl!.text.length == 0) {
+                    showWarningDialog(context, 'ป้อนจำนวนเงินก่อนนะครับ');
+                    return;
+                  } else if (check_tip == true) {
+                    if (tip_ctrl!.text.length == 0) {
+                      showWarningDialog(context, 'ป้อนจำนวนทิปก่อนนะครับ');
+                      return;
+                    } else {
+                      //คำนวณ (money_ctrl+tip_ctrl)/person_ctrl
+                    }
+                  } else {
+                    //คำนวณ money_ctrl/person_ctrl
+                  }
+                },
                 child: Text(
                   'คำนวณ',
                 ),
@@ -156,6 +240,11 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                     MediaQuery.of(context).size.width - 80.0,
                     50.0,
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
                   primary: Color(0xff5a026a),
                 ),
               ),
@@ -163,7 +252,16 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                 height: 20,
               ),
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  //เขียน Logic การทำงานโดยจะเคลียร์ค่าททุกอย่างบนหน้าจอ
+                  //กลับมาเป็นเหมือนเดิม
+                  setState(() {
+                    money_ctrl!.clear();
+                    person_ctrl!.clear();
+                    tip_ctrl!.clear();
+                    check_tip = false;
+                  });
+                },
                 label: Text(
                   'ยกเลิก',
                 ),
@@ -175,7 +273,21 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                     MediaQuery.of(context).size.width - 80.0,
                     50.0,
                   ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                  ),
                   primary: Color(0xffB21B1B),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Created by BC SAU 2021',
+                style: TextStyle(
+                  color: Colors.grey,
                 ),
               ),
             ],
