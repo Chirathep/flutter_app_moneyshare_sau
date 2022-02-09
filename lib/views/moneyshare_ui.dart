@@ -218,12 +218,18 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (money_ctrl!.text.length == 0) {
-                    showWarningDialog(context, 'ป้อนจำนวนเงินก่อนนะครับ');
+                  if (money_ctrl!.text.isEmpty) {
+                    showWarningDialog(
+                        context, 'กรุณาป้อนจำนวนเงินที่ต้องการแชร์');
+                    return;
+                  } else if (person_ctrl!.text.isEmpty) {
+                    showWarningDialog(
+                        context, 'กรุณาป้อนจำนวนคนที่ต้องการแชร์');
                     return;
                   } else if (check_tip == true) {
-                    if (tip_ctrl!.text.length == 0) {
-                      showWarningDialog(context, 'ป้อนจำนวนทิปก่อนนะครับ');
+                    if (tip_ctrl!.text.isEmpty) {
+                      showWarningDialog(
+                          context, 'กรุณาป้อนจำนวนทิปที่ต้องการแชร์');
                       return;
                     } else {
                       //คำนวณ (money_ctrl+tip_ctrl)/person_ctrl
