@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_app_moneyshared_sau/views/show_moneyshare_ui.dart';
 
 class MoneyshareUI extends StatefulWidget {
   const MoneyshareUI({Key? key}) : super(key: key);
@@ -20,7 +21,6 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
 
   showWarningDialog(context, msg) {
     //เรียกใช้งานฟังก์ชัน showDialog
-
     showDialog(
       context: context,
       builder: (context) {
@@ -165,6 +165,9 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                     onChanged: (checked) {
                       setState(() {
                         check_tip = checked;
+                        if (checked == false) {
+                          tip_ctrl!.text = '';
+                        }
                       });
                     },
                     value: check_tip,
@@ -218,6 +221,10 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  //สร้างตัวแปรมาเก็บผลลัพธ์จากการคำนวณ
+
+                  double? moneyshare = 0;
+                  //ตรวจสอบและคำนวณ
                   if (money_ctrl!.text.isEmpty) {
                     showWarningDialog(
                         context, 'กรุณาป้อนจำนวนเงินที่ต้องการแชร์');
@@ -226,17 +233,37 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                     showWarningDialog(
                         context, 'กรุณาป้อนจำนวนคนที่ต้องการแชร์');
                     return;
-                  } else if (check_tip == true) {
+                  } else if (check_tip == false) {
+                    //คำนวณแบบไม่มี tip
+                    double? money = double.parse(money_ctrl!.text);
+                    int? person = int.parse(person_ctrl!.text);
+                    moneyshare = money / person;
+                  } else {
+                    //ป้อนกรอก tip หรือยัง
                     if (tip_ctrl!.text.isEmpty) {
-                      showWarningDialog(
-                          context, 'กรุณาป้อนจำนวนทิปที่ต้องการแชร์');
+                      showWarningDialog(context, 'กรุณาป้อนจำนวนทิป');
                       return;
                     } else {
-                      //คำนวณ (money_ctrl+tip_ctrl)/person_ctrl
+                      //คำนวณแบบมี tip
+                      double? money = double.parse(money_ctrl!.text);
+                      int? person = int.parse(person_ctrl!.text);
+                      double? tip = double.parse(tip_ctrl!.text);
+                      moneyshare = (money + tip) / person;
                     }
-                  } else {
-                    //คำนวณ money_ctrl/person_ctrl
                   }
+                  //เอา moneyshare,money,person,tip ส่งไปหน้า ShowMoneyshareUI
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ShowMoneyshareUI(
+                        moneyshare: moneyshare,
+                        money: double.parse(money_ctrl!.text),
+                        person: int.parse(person_ctrl!.text),
+                        tip: double.parse(
+                            tip_ctrl!.text.isEmpty ? '0' : tip_ctrl!.text),
+                      ),
+                    ),
+                  );
                 },
                 child: Text(
                   'คำนวณ',
@@ -296,6 +323,9 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                   color: Colors.grey,
                 ),
               ),
+              SizedBox(
+                height: 40,
+              )
             ],
           ),
         ),
