@@ -16,9 +16,13 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
   TextEditingController? money_ctrl = TextEditingController();
   TextEditingController? person_ctrl = TextEditingController();
   TextEditingController? tip_ctrl = TextEditingController();
+  //----------------------------------------------------------//
 
+  //test hiding keyboard
+  // FocusNode? money_focus = FocusNode();
+
+  //----------------------------------------------------------//
   //เมธอด -> โค้ดแสดง Dialog เตือน โดยจะรับข้อความมาแสดงที่ Dialog
-
   showWarningDialog(context, msg) {
     //เรียกใช้งานฟังก์ชัน showDialog
     showDialog(
@@ -89,6 +93,7 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
               SizedBox(
                 height: 15,
               ),
+
               Image.asset(
                 'assets/images/logo.png',
                 width: 150,
@@ -192,6 +197,7 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                   top: 5,
                 ),
                 child: TextField(
+                  enabled: check_tip == true ? true : false,
                   controller: tip_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
